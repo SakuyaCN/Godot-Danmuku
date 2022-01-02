@@ -1,0 +1,57 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "Reference",
+"class": "EventDanmu",
+"language": "GDScript",
+"path": "res://addons/danmuku/event/EventDanmu.gd"
+}, {
+"base": "Reference",
+"class": "EventGif",
+"language": "GDScript",
+"path": "res://addons/danmuku/event/EventGif.gd"
+}, {
+"base": "Reference",
+"class": "EventGifCombo",
+"language": "GDScript",
+"path": "res://addons/danmuku/event/EventGifCombo.gd"
+} ]
+_global_script_class_icons={
+"EventDanmu": "",
+"EventGif": "",
+"EventGifCombo": ""
+}
+
+[application]
+
+config/name="GodotDanmuku"
+run/main_scene="res://test.tscn"
+config/icon="res://icon.png"
+
+[autoload]
+
+Constvalue="*res://addons/danmuku/Constvalue.gd"
+BliUtils="*res://addons/danmuku/utils/BliUtils.gd"
+
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/danmuku/plugin.cfg" )
+
+[physics]
+
+common/enable_pause_aware_picking=true
+
+[rendering]
+
+quality/driver/driver_name="GLES2"
+vram_compression/import_etc=true
+vram_compression/import_etc2=false
+environment/default_environment="res://default_env.tres"
