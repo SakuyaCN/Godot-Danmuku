@@ -22,6 +22,7 @@ func _init():
 	heart_timer.wait_time = 30
 	heart_timer.connect("timeout",self,"_heart_packet")
 	$HTTPRequest.connect("request_completed", self, "_negotiate")
+	$HTTPRequest.request("https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=%d" % roomid)
 
 func _negotiate(result, response_code, headers, body):
 	# TODO: 报告错误
