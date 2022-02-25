@@ -1,6 +1,8 @@
 extends Node
 
-export var websocket_url = "wss://broadcastlv.chat.bilibili.com:2245/sub"
+# const
+# export skip_negotiate ?
+export var default_endpoint = "wss://broadcastlv.chat.bilibili.com:443/sub"
 export var roomid = 139
 
 var _client = WebSocketClient.new()
@@ -8,6 +10,7 @@ var heart_timer:Timer
 
 #人气值
 var pop = 0
+var endpoint = default_endpint
 
 signal popValueSet(pop)
 signal dmSend(bean)
@@ -18,6 +21,19 @@ func _init():
 	heart_timer = Timer.new()
 	heart_timer.wait_time = 30
 	heart_timer.connect("timeout",self,"_heart_packet")
+	$HTTPRequest.connect("request_completed", self, "_negotiate")
+	$HTTPRequest.request("https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=%d" % roomid)
+
+func _negotiate(result, response_code, headers, body):
+	# TODO: 报告错误
+	var response = JSON.parse(body.get_string_from_utf8())
+	var result = response.result
+	if result.code != 0:
+		return
+	var host = result.data.host_list[0]
+	# TODO: 选协议
+	endpoint = "%s://%s:%d/sub" % ["wss", host.host, host.wss_port]
+	$HTTPRequest.disconnect("request_completed", self, "_negotiate")
 
 func _ready():
 	add_child(heart_timer)
@@ -25,7 +41,7 @@ func _ready():
 	_client.connect("connection_error", self, "_closed")
 	_client.connect("connection_established", self, "_connected")
 	_client.connect("data_received", self, "_on_data")
-	var err = _client.connect_to_url(websocket_url)
+	var err = _client.connect_to_url(endpoint)
 	if err != OK:
 		print("Unable to connect")
 		set_process(false)
